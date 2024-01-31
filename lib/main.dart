@@ -115,7 +115,7 @@ class _DraggableExampleState extends State<DraggableExample> {
     return DragTarget(
       builder: (context, candidateData, rejectedData) {
         return Container(
-          height: 180,
+          height: 190,
           width: 150,
           color: color,
           child: Center(
@@ -126,64 +126,79 @@ class _DraggableExampleState extends State<DraggableExample> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     for (Box droppedBox in droppedBoxes)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Column(
-                            children: [
-                              GestureDetector(
-                                  child: const Icon(
-                                    Icons.arrow_upward,
-                                    size: 10,
+                      Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                      child: const Icon(
+                                        Icons.arrow_upward,
+                                        size: 10,
+                                      ),
+                                      onTap: () {
+                                        int currentIndex =
+                                            (droppedBoxes.indexOf(droppedBox));
+                                        int newIndex = currentIndex - 1;
+
+                                        if (currentIndex > 0) {
+                                          setState(() {
+                                            Box movedBox = droppedBoxes
+                                                .removeAt(currentIndex);
+                                            droppedBoxes.insert(
+                                                newIndex, movedBox);
+                                          });
+                                        }
+                                      }),
+                                  const SizedBox(
+                                    height: 10,
                                   ),
-                                  onTap: () {
-                                    int currentIndex =
-                                        (droppedBoxes.indexOf(droppedBox));
-                                    int newIndex = currentIndex - 1;
+                                  GestureDetector(
+                                    child: const Icon(
+                                      Icons.arrow_downward,
+                                      size: 10,
+                                    ),
+                                    onTap: () {
+                                      int currentIndex =
+                                          (droppedBoxes.indexOf(droppedBox));
+                                      int newIndex = currentIndex + 1;
 
-                                    if (currentIndex > 0) {
-                                      setState(() {
-                                        Box movedBox =
-                                            droppedBoxes.removeAt(currentIndex);
-                                        droppedBoxes.insert(newIndex, movedBox);
-                                      });
-                                    }
-                                  }),
-                              const SizedBox(
-                                height: 10,
+                                      if (currentIndex <
+                                          droppedBoxes.length - 1) {
+                                        setState(() {
+                                          Box movedBox = droppedBoxes
+                                              .removeAt(currentIndex);
+                                          droppedBoxes.insert(
+                                              newIndex, movedBox);
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ],
                               ),
-                              GestureDetector(
-                                child: const Icon(
-                                  Icons.arrow_downward,
-                                  size: 10,
-                                ),
-                                onTap: () {
-                                  int currentIndex =
-                                      (droppedBoxes.indexOf(droppedBox));
-                                  int newIndex = currentIndex + 1;
-
-                                  if (currentIndex < droppedBoxes.length - 1) {
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 4.0),
+                                child: DraggableBox(
+                                  box: droppedBox,
+                                  allowedDropKey: widget.key,
+                                  onDragStarted: () {
                                     setState(() {
-                                      Box movedBox =
-                                          droppedBoxes.removeAt(currentIndex);
-                                      droppedBoxes.insert(newIndex, movedBox);
+                                      droppedBoxes.remove(droppedBox);
+                                      boxes.add(droppedBox);
                                     });
-                                  }
-                                },
+                                  },
+                                ),
                               ),
-                            ],
-                          ),
-                          DraggableBox(
-                            box: droppedBox,
-                            allowedDropKey: widget.key,
-                            onDragStarted: () {
-                              setState(() {
-                                droppedBoxes.remove(droppedBox);
-                                boxes.add(droppedBox);
-                              });
-                            },
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                   ],
                 ),
