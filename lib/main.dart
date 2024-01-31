@@ -58,6 +58,7 @@ class _DraggableExampleState extends State<DraggableExample> {
   late List<List<Box>> droppedBoxesList;
   late Key key;
   List<Box> boxes = [];
+  bool isDraggingOver = false;
   @override
   void initState() {
     super.initState();
@@ -117,7 +118,7 @@ class _DraggableExampleState extends State<DraggableExample> {
         return Container(
           height: 190,
           width: 150,
-          color: color,
+          color: isDraggingOver ? Colors.green : Colors.yellow,
           child: Center(
             child: Column(
               children: [
@@ -209,14 +210,23 @@ class _DraggableExampleState extends State<DraggableExample> {
       },
       onWillAccept: (Box? droppedBox) {
         if (droppedBox!.key == key) {
+          setState(() {
+            isDraggingOver = true;
+          });
           return true;
         }
         return false;
+      },
+      onLeave: (data) {
+        setState(() {
+          isDraggingOver = false;
+        });
       },
       onAccept: (Box droppedBox) {
         setState(() {
           droppedBoxes.add(droppedBox);
           boxes.remove(droppedBox);
+          isDraggingOver = false;
         });
       },
     );
@@ -226,7 +236,7 @@ class _DraggableExampleState extends State<DraggableExample> {
 class Box {
   final int id;
   final Color color;
-  final key;
+  final Key key;
   Box(this.id, this.color, this.key);
 }
 
