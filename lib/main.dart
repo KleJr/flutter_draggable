@@ -14,22 +14,22 @@ class MyApp extends StatelessWidget {
     UniqueKey chave = UniqueKey();
     return MaterialApp(
       home: Scaffold(
+        appBar: AppBar(title: Text('Draggable Tests')),
         body: Column(
           children: [
             Expanded(
               child: DraggableExample(
                 key:
                     UniqueKey(), // Usando UniqueKey para identificar a instância
-                dias: 7,
+                dias: 2,
               ),
             ),
             const SizedBox(height: 20),
             Expanded(
               child: DraggableExample(
-                key:
-                    UniqueKey(), // Usando UniqueKey para identificar a instância
-                dias: 5,
-              ),
+                  key:
+                      UniqueKey(), // Usando UniqueKey para identificar a instância
+                  dias: 2),
             ),
           ],
         ),
@@ -45,14 +45,6 @@ class DraggableExample extends StatefulWidget {
 
   @override
   State<DraggableExample> createState() => _DraggableExampleState();
-}
-
-void reorderBoxes(List<Box> droppedBoxes, int oldIndex, int newIndex) {
-  if (oldIndex < newIndex) {
-    newIndex -= 1;
-  }
-  final Box item = droppedBoxes.removeAt(oldIndex);
-  droppedBoxes.insert(newIndex, item);
 }
 
 class _DraggableExampleState extends State<DraggableExample> {
@@ -71,45 +63,39 @@ class _DraggableExampleState extends State<DraggableExample> {
       Box(1, Colors.blue, key, 0),
       Box(2, Colors.red, key, 0),
       Box(3, Colors.green, key, 0),
-      Box(4, Colors.amber, key, 0),
-      Box(5, Colors.grey, key, 0),
-      Box(6, Colors.white, key, 0),
+      // Box(4, Colors.amber, key, 0),
+      // Box(5, Colors.grey, key, 0),
+      // Box(6, Colors.white, key, 0),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: key,
-      appBar: AppBar(
-        title: const Text('Draggable Example'),
-      ),
-      body: Column(
-        children: [
-          Container(
-            height: 150,
-            width: double.infinity,
-            color: Colors.grey[300],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(boxes.length.toString()),
-                for (Box box in boxes)
-                  DraggableBox(
-                    key: UniqueKey(),
-                    box: box,
-                    allowedDropKey: widget.key,
-                  ),
-              ],
-            ),
+    return Column(
+      children: [
+        Container(
+          height: 150,
+          width: double.infinity,
+          color: Colors.grey[300],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(boxes.length.toString()),
+              for (Box box in boxes)
+                DraggableBox(
+                  key: UniqueKey(),
+                  box: box,
+                  allowedDropKey: widget.key,
+                ),
+            ],
           ),
-          const SizedBox(height: 20),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            for (int dia = 0; dia < widget.dias; dia++)
-              myDragTarget(Colors.yellow, droppedBoxesList[dia], dia),
-          ]),
-        ],
-      ),
+        ),
+        const SizedBox(height: 20),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          for (int dia = 0; dia < widget.dias; dia++)
+            myDragTarget(Colors.yellow, droppedBoxesList[dia], dia),
+        ]),
+      ],
     );
   }
 
