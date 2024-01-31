@@ -29,11 +29,14 @@ class _DraggableExampleState extends State<DraggableExample> {
     Box(3, Colors.green),
   ];
 
-  List<Box> droppedBoxesYellow = [];
-  List<Box> droppedBoxesOrange = [];
+  int dias = 5;
+  List<List<Box>> droppedBoxesList = [];
 
   @override
   Widget build(BuildContext context) {
+    for (int dia = 0; dia < dias; dia++) {
+      droppedBoxesList.add([]);
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Draggable Example'),
@@ -47,6 +50,7 @@ class _DraggableExampleState extends State<DraggableExample> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Text(boxes.length.toString()),
                 for (Box box in boxes)
                   DraggableBox(
                     box: box,
@@ -55,83 +59,50 @@ class _DraggableExampleState extends State<DraggableExample> {
             ),
           ),
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              DragTarget(
-                builder: (context, candidateData, rejectedData) {
-                  return Container(
-                    height: 150,
-                    width: 150,
-                    color: Colors.yellow,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (Box droppedBox in droppedBoxesYellow)
-                            DraggableBox(
-                              box: droppedBox,
-                              onDragStarted: () {
-                                setState(() {
-                                  droppedBoxesYellow.remove(droppedBox);
-                                  boxes.add(droppedBox);
-                                });
-                              },
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                onWillAccept: (Box? droppedBox) {
-                  return true;
-                },
-                onAccept: (Box droppedBox) {
-                  setState(() {
-                    droppedBoxesYellow.add(droppedBox);
-                    boxes.remove(droppedBox);
-                  });
-                },
-              ),
-              DragTarget(
-                builder: (context, candidateData, rejectedData) {
-                  return Container(
-                    height: 150,
-                    width: 150,
-                    color: Colors.orange,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (Box droppedBox in droppedBoxesOrange)
-                            DraggableBox(
-                              box: droppedBox,
-                              onDragStarted: () {
-                                setState(() {
-                                  droppedBoxesOrange.remove(droppedBox);
-                                  boxes.add(droppedBox);
-                                });
-                              },
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                onWillAccept: (Box? droppedBox) {
-                  return true;
-                },
-                onAccept: (Box droppedBox) {
-                  setState(() {
-                    droppedBoxesOrange.add(droppedBox);
-                    boxes.remove(droppedBox);
-                  });
-                },
-              ),
-            ],
-          ),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            for (int dia = 0; dia < dias; dia++)
+              myDragTarget(Colors.yellow, droppedBoxesList[dia]),
+          ]),
         ],
       ),
+    );
+  }
+
+  DragTarget<Box> myDragTarget(Color color, List<Box> droppedBoxes) {
+    return DragTarget(
+      builder: (context, candidateData, rejectedData) {
+        return Container(
+          height: 150,
+          width: 150,
+          color: color,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (Box droppedBox in droppedBoxes)
+                  DraggableBox(
+                    box: droppedBox,
+                    onDragStarted: () {
+                      setState(() {
+                        droppedBoxes.remove(droppedBox);
+                        boxes.add(droppedBox);
+                      });
+                    },
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+      onWillAccept: (Box? droppedBox) {
+        return true;
+      },
+      onAccept: (Box droppedBox) {
+        setState(() {
+          droppedBoxes.add(droppedBox);
+          boxes.remove(droppedBox);
+        });
+      },
     );
   }
 }
