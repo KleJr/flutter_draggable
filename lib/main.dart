@@ -43,7 +43,7 @@ class DraggableExample extends StatefulWidget {
   const DraggableExample({super.key, required this.dias});
 
   @override
-  _DraggableExampleState createState() => _DraggableExampleState();
+  State<DraggableExample> createState() => _DraggableExampleState();
 }
 
 void reorderBoxes(List<Box> droppedBoxes, int oldIndex, int newIndex) {
