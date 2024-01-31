@@ -105,14 +105,14 @@ class _DraggableExampleState extends State<DraggableExample> {
           const SizedBox(height: 20),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             for (int dia = 0; dia < widget.dias; dia++)
-              myDragTarget(Colors.yellow, droppedBoxesList[dia]),
+              myDragTarget(Colors.yellow, droppedBoxesList[dia], dia),
           ]),
         ],
       ),
     );
   }
 
-  DragTarget<Box> myDragTarget(Color color, List<Box> droppedBoxes) {
+  DragTarget<Box> myDragTarget(Color color, List<Box> droppedBoxes, int dia) {
     return DragTarget(
       builder: (context, candidateData, rejectedData) {
         return Container(
@@ -224,6 +224,7 @@ class _DraggableExampleState extends State<DraggableExample> {
       },
       onAccept: (Box droppedBox) {
         setState(() {
+          print('${droppedBox.id} - inserir no dia $dia');
           droppedBoxes.add(droppedBox);
           boxes.remove(droppedBox);
           isDraggingOver = false;
