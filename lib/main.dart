@@ -107,10 +107,8 @@ class _DraggableExampleState extends State<DraggableExample> {
                                     int currentIndex =
                                         (droppedBoxes.indexOf(droppedBox));
                                     int newIndex = currentIndex - 1;
-                                    if (currentIndex <= 0) {
-                                      newIndex = 0;
-                                    }
-                                    if (currentIndex != newIndex) {
+
+                                    if (currentIndex > 0) {
                                       setState(() {
                                         Box movedBox =
                                             droppedBoxes.removeAt(currentIndex);
@@ -130,10 +128,8 @@ class _DraggableExampleState extends State<DraggableExample> {
                                   int currentIndex =
                                       (droppedBoxes.indexOf(droppedBox));
                                   int newIndex = currentIndex + 1;
-                                  if (currentIndex >= droppedBoxes.length - 1) {
-                                    newIndex = currentIndex;
-                                  }
-                                  if (newIndex != currentIndex) {
+
+                                  if (currentIndex < droppedBoxes.length - 1) {
                                     setState(() {
                                       Box movedBox =
                                           droppedBoxes.removeAt(currentIndex);
@@ -141,7 +137,7 @@ class _DraggableExampleState extends State<DraggableExample> {
                                     });
                                   }
                                 },
-                              )
+                              ),
                             ],
                           ),
                           DraggableBox(
