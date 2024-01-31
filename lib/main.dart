@@ -35,7 +35,9 @@ class _DraggableExampleState extends State<DraggableExample> {
   @override
   Widget build(BuildContext context) {
     for (int dia = 0; dia < dias; dia++) {
-      droppedBoxesList.add([]);
+      List<Box> adds = [];
+      adds.add(Box(1, Colors.black));
+      droppedBoxesList.add(adds);
     }
     return Scaffold(
       appBar: AppBar(
