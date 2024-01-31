@@ -22,6 +22,14 @@ class DraggableExample extends StatefulWidget {
   _DraggableExampleState createState() => _DraggableExampleState();
 }
 
+void reorderBoxes(List<Box> droppedBoxes, int oldIndex, int newIndex) {
+  if (oldIndex < newIndex) {
+    newIndex -= 1;
+  }
+  final Box item = droppedBoxes.removeAt(oldIndex);
+  droppedBoxes.insert(newIndex, item);
+}
+
 class _DraggableExampleState extends State<DraggableExample> {
   List<Box> boxes = [
     Box(1, Colors.blue),
@@ -85,14 +93,67 @@ class _DraggableExampleState extends State<DraggableExample> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     for (Box droppedBox in droppedBoxes)
-                      DraggableBox(
-                        box: droppedBox,
-                        onDragStarted: () {
-                          setState(() {
-                            droppedBoxes.remove(droppedBox);
-                            boxes.add(droppedBox);
-                          });
-                        },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              GestureDetector(
+                                  child: const Icon(
+                                    Icons.arrow_upward,
+                                    size: 10,
+                                  ),
+                                  onTap: () {
+                                    int currentIndex =
+                                        (droppedBoxes.indexOf(droppedBox));
+                                    int newIndex = currentIndex - 1;
+                                    if (currentIndex <= 0) {
+                                      newIndex = 0;
+                                    }
+                                    if (currentIndex != newIndex) {
+                                      setState(() {
+                                        Box movedBox =
+                                            droppedBoxes.removeAt(currentIndex);
+                                        droppedBoxes.insert(newIndex, movedBox);
+                                      });
+                                    }
+                                  }),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                child: const Icon(
+                                  Icons.arrow_downward,
+                                  size: 10,
+                                ),
+                                onTap: () {
+                                  int currentIndex =
+                                      (droppedBoxes.indexOf(droppedBox));
+                                  int newIndex = currentIndex + 1;
+                                  if (currentIndex >= droppedBoxes.length - 1) {
+                                    newIndex = currentIndex;
+                                  }
+                                  if (newIndex != currentIndex) {
+                                    setState(() {
+                                      Box movedBox =
+                                          droppedBoxes.removeAt(currentIndex);
+                                      droppedBoxes.insert(newIndex, movedBox);
+                                    });
+                                  }
+                                },
+                              )
+                            ],
+                          ),
+                          DraggableBox(
+                            box: droppedBox,
+                            onDragStarted: () {
+                              setState(() {
+                                droppedBoxes.remove(droppedBox);
+                                boxes.add(droppedBox);
+                              });
+                            },
+                          ),
+                        ],
                       ),
                   ],
                 ),
