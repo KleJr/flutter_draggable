@@ -72,23 +72,28 @@ class _DraggableExampleState extends State<DraggableExample> {
     return DragTarget(
       builder: (context, candidateData, rejectedData) {
         return Container(
-          height: 150,
+          height: 180,
           width: 150,
           color: color,
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                for (Box droppedBox in droppedBoxes)
-                  DraggableBox(
-                    box: droppedBox,
-                    onDragStarted: () {
-                      setState(() {
-                        droppedBoxes.remove(droppedBox);
-                        boxes.add(droppedBox);
-                      });
-                    },
-                  ),
+                Text(droppedBoxes.length.toString()),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (Box droppedBox in droppedBoxes)
+                      DraggableBox(
+                        box: droppedBox,
+                        onDragStarted: () {
+                          setState(() {
+                            droppedBoxes.remove(droppedBox);
+                            boxes.add(droppedBox);
+                          });
+                        },
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -124,12 +129,18 @@ class DraggableBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Draggable(
       data: box,
-      feedback: Container(
-        width: 50,
-        height: 50,
-        color: box.color.withOpacity(0.7),
-        child: Center(
-          child: Text('Box ${box.id}'),
+      feedback: Material(
+        color: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Container(
+            width: 50,
+            height: 50,
+            color: box.color.withOpacity(0.7),
+            child: Center(
+              child: Text('Box ${box.id}'),
+            ),
+          ),
         ),
       ),
       childWhenDragging: Container(),
@@ -137,7 +148,6 @@ class DraggableBox extends StatelessWidget {
       onDragEnd: (details) {
         if (details.wasAccepted) {
           // Não faz nada se o item foi solto na área de recebimento
-
           return;
         }
 
