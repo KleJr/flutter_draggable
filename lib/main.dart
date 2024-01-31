@@ -224,7 +224,7 @@ class _DraggableExampleState extends State<DraggableExample> {
       },
       onAccept: (Box droppedBox) {
         setState(() {
-          print('${droppedBox.id} - inserir no dia $dia');
+          print('Box: ${droppedBox.id} / dia $dia');
           droppedBoxes.add(droppedBox);
           boxes.remove(droppedBox);
           isDraggingOver = false;
