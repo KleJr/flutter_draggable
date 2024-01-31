@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UniqueKey chave = UniqueKey();
     return MaterialApp(
       home: Scaffold(
         body: Column(
@@ -64,15 +65,15 @@ class _DraggableExampleState extends State<DraggableExample> {
     super.initState();
     key = widget.key!;
     droppedBoxesList =
-        List.generate(widget.dias, (index) => [Box(1, Colors.black, key)]);
+        List.generate(widget.dias, (index) => [Box(1, Colors.black, key, 0)]);
 
     boxes = [
-      Box(1, Colors.blue, key),
-      Box(2, Colors.red, key),
-      Box(3, Colors.green, key),
-      Box(4, Colors.amber, key),
-      Box(5, Colors.grey, key),
-      Box(6, Colors.white, key),
+      Box(1, Colors.blue, key, 0),
+      Box(2, Colors.red, key, 0),
+      Box(3, Colors.green, key, 0),
+      Box(4, Colors.amber, key, 0),
+      Box(5, Colors.grey, key, 0),
+      Box(6, Colors.white, key, 0),
     ];
   }
 
@@ -210,21 +211,21 @@ class _DraggableExampleState extends State<DraggableExample> {
       },
       onWillAccept: (Box? droppedBox) {
         if (droppedBox!.key == key) {
-          setState(() {
-            isDraggingOver = true;
-          });
+          // setState(() {
+          //   isDraggingOver = true;
+          // });
           return true;
         }
         return false;
       },
       onLeave: (data) {
-        setState(() {
-          isDraggingOver = false;
-        });
+        // setState(() {
+        //   isDraggingOver = false;
+        // });
       },
       onAccept: (Box droppedBox) {
         setState(() {
-          print('Box: ${droppedBox.id} / dia $dia');
+          print('Box: ${droppedBox.id} / dia $dia / key $key');
           droppedBoxes.add(droppedBox);
           boxes.remove(droppedBox);
           isDraggingOver = false;
@@ -238,7 +239,8 @@ class Box {
   final int id;
   final Color color;
   final Key key;
-  Box(this.id, this.color, this.key);
+  int day;
+  Box(this.id, this.color, this.key, this.day);
 }
 
 class DraggableBox extends StatelessWidget {
