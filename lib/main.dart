@@ -5,18 +5,42 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: DraggableExample(),
+    return MaterialApp(
+      home: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              child: DraggableExample(
+                key:
+                    UniqueKey(), // Usando UniqueKey para identificar a instância
+                dias: 7,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: DraggableExample(
+                key:
+                    UniqueKey(), // Usando UniqueKey para identificar a instância
+                dias: 5,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
 class DraggableExample extends StatefulWidget {
-  const DraggableExample({super.key});
+  final int dias;
+
+  const DraggableExample({super.key, required this.dias});
 
   @override
   _DraggableExampleState createState() => _DraggableExampleState();
@@ -31,23 +55,30 @@ void reorderBoxes(List<Box> droppedBoxes, int oldIndex, int newIndex) {
 }
 
 class _DraggableExampleState extends State<DraggableExample> {
-  List<Box> boxes = [
-    Box(1, Colors.blue),
-    Box(2, Colors.red),
-    Box(3, Colors.green),
-  ];
+  late List<List<Box>> droppedBoxesList;
+  late Key key;
+  List<Box> boxes = [];
+  @override
+  void initState() {
+    super.initState();
+    key = widget.key!;
+    droppedBoxesList =
+        List.generate(widget.dias, (index) => [Box(1, Colors.black, key)]);
 
-  int dias = 5;
-  List<List<Box>> droppedBoxesList = [];
+    boxes = [
+      Box(1, Colors.blue, key),
+      Box(2, Colors.red, key),
+      Box(3, Colors.green, key),
+      Box(4, Colors.amber, key),
+      Box(5, Colors.grey, key),
+      Box(6, Colors.white, key),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    for (int dia = 0; dia < dias; dia++) {
-      List<Box> adds = [];
-      adds.add(Box(1, Colors.black));
-      droppedBoxesList.add(adds);
-    }
     return Scaffold(
+      key: key,
       appBar: AppBar(
         title: const Text('Draggable Example'),
       ),
@@ -63,14 +94,16 @@ class _DraggableExampleState extends State<DraggableExample> {
                 Text(boxes.length.toString()),
                 for (Box box in boxes)
                   DraggableBox(
+                    key: UniqueKey(),
                     box: box,
+                    allowedDropKey: widget.key,
                   ),
               ],
             ),
           ),
           const SizedBox(height: 20),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            for (int dia = 0; dia < dias; dia++)
+            for (int dia = 0; dia < widget.dias; dia++)
               myDragTarget(Colors.yellow, droppedBoxesList[dia]),
           ]),
         ],
@@ -142,6 +175,7 @@ class _DraggableExampleState extends State<DraggableExample> {
                           ),
                           DraggableBox(
                             box: droppedBox,
+                            allowedDropKey: widget.key,
                             onDragStarted: () {
                               setState(() {
                                 droppedBoxes.remove(droppedBox);
@@ -159,7 +193,10 @@ class _DraggableExampleState extends State<DraggableExample> {
         );
       },
       onWillAccept: (Box? droppedBox) {
-        return true;
+        if (droppedBox!.key == key) {
+          return true;
+        }
+        return false;
       },
       onAccept: (Box droppedBox) {
         setState(() {
@@ -174,19 +211,22 @@ class _DraggableExampleState extends State<DraggableExample> {
 class Box {
   final int id;
   final Color color;
-
-  Box(this.id, this.color);
+  final key;
+  Box(this.id, this.color, this.key);
 }
 
 class DraggableBox extends StatelessWidget {
   final Box box;
   final VoidCallback? onDragStarted;
+  final Key? allowedDropKey;
 
-  const DraggableBox({super.key, required this.box, this.onDragStarted});
+  const DraggableBox(
+      {super.key, required this.box, this.onDragStarted, this.allowedDropKey});
 
   @override
   Widget build(BuildContext context) {
     return Draggable(
+      key: allowedDropKey,
       data: box,
       feedback: Material(
         color: Colors.transparent,
