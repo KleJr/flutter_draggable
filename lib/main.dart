@@ -74,7 +74,7 @@ class _DraggableExampleState extends State<DraggableExample> {
     return Column(
       children: [
         Container(
-          height: 150,
+          height: 90,
           width: double.infinity,
           color: Colors.grey[300],
           child: Row(
@@ -90,7 +90,7 @@ class _DraggableExampleState extends State<DraggableExample> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           for (int dia = 0; dia < widget.dias; dia++)
             myDragTarget(Colors.yellow, droppedBoxesList[dia], dia),
@@ -246,6 +246,7 @@ class DraggableBox extends StatelessWidget {
       childWhenDragging: feedBackBox(box: box),
       onDragStarted: onDragStarted,
       onDragEnd: (details) {
+        print(details.wasAccepted);
         if (details.wasAccepted) {
           // Não faz nada se o item foi solto na área de recebimento
           return;
