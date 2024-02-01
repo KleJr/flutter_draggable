@@ -1,7 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
+}
+
+String generateRandomFourDigitNumber() {
+  // Gerar um número aleatório entre 1000 e 9999
+  int randomNumber = Random().nextInt(9000) + 1000;
+  return randomNumber.toString();
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +44,7 @@ class MyApp extends StatelessWidget {
 
 class Promotor {
   final String id;
-  final List<Box> droppedBoxes;
+  final List<List<Box>> droppedBoxes;
 
   Promotor(this.id, this.droppedBoxes);
 }
@@ -52,9 +60,9 @@ class DraggableExample extends StatefulWidget {
   final int dias;
 
   const DraggableExample({
-    Key? key,
+    super.key,
     required this.dias,
-  }) : super(key: key);
+  });
 
   @override
   State<DraggableExample> createState() => _DraggableExampleState();
@@ -76,22 +84,46 @@ class _DraggableExampleState extends State<DraggableExample> {
     chave = widget.key!;
     // Exemplo de estabelecimento com dois promotores
 
-    for (int i = 0; i < 2; i++) {
-      final estabelecimentoId = UniqueKey().toString();
+    // for (int i = 0; i < 2; i++) {
+    //   final estabelecimentoId = UniqueKey().toString();
 
-      final estabelecimento = Estabelecimento(estabelecimentoId, [
-        Promotor(promotor1Id, [Box(1, Colors.black, chave, 0)]),
-        Promotor(promotor2Id, [Box(1, Colors.black, chave, 0)]),
-        Promotor(promotor3Id, [Box(1, Colors.black, chave, 0)]),
-      ]);
+    final estabelecimento = Estabelecimento(chave.toString(), [
+      Promotor(promotor1Id, [
+        [Box(generateRandomFourDigitNumber(), Colors.grey, chave, 0)],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]),
+      Promotor(promotor2Id, [
+        [],
+        [],
+        [],
+        [Box(generateRandomFourDigitNumber(), Colors.grey, chave, 0)],
+        [],
+        [],
+        []
+      ]),
+      // Promotor(promotor3Id, [
+      //   [Box(1, Colors.grey, chave, 0)],
+      //   [],
+      //   [],
+      //   [],
+      //   [],
+      //   [],
+      //   []
+      // ]),
+    ]);
 
-      estabelecimentos.add(estabelecimento);
-    }
+    estabelecimentos.add(estabelecimento);
+    // }
 
     boxes = [
-      Box(1, Colors.blue, chave, 0),
-      Box(2, Colors.red, chave, 0),
-      Box(3, Colors.green, chave, 0),
+      Box(generateRandomFourDigitNumber(), Colors.blue, chave, 0),
+      Box(generateRandomFourDigitNumber(), Colors.red, chave, 0),
+      Box(generateRandomFourDigitNumber(), Colors.green, chave, 0),
     ];
   }
 
@@ -100,19 +132,24 @@ class _DraggableExampleState extends State<DraggableExample> {
     return Column(
       children: [
         Container(
-          height: 50,
+          height: 70,
           width: double.infinity,
           color: Colors.grey[300],
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Column(
             children: [
-              Text(boxes.length.toString()),
-              for (Box box in boxes)
-                DraggableBox(
-                  key: UniqueKey(),
-                  box: box,
-                  allowedDropKey: chave,
-                ),
+              Text('Estabelecimento : $chave'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text('${boxes.length.toString()} Pendentes'),
+                  for (Box box in boxes)
+                    DraggableBox(
+                      key: UniqueKey(),
+                      box: box,
+                      allowedDropKey: chave,
+                    ),
+                ],
+              ),
             ],
           ),
         ),
@@ -121,18 +158,23 @@ class _DraggableExampleState extends State<DraggableExample> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  children: estabelecimento.promotores.map((e) {
-                    return myDragTarget(
-                      Colors.yellow,
-                      e.droppedBoxes,
-                      e.id,
-                      estabelecimento.id,
-                    );
-                  }).toList(),
-                )
-              ],
+              children: estabelecimento.promotores.map((e) {
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    children: [
+                      Text('Promotor : ${e.id}'),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            for (int i = 0; i < e.droppedBoxes.length; i++)
+                              myDragTarget(Colors.yellow, e.droppedBoxes[i],
+                                  e.id, estabelecimento.id, i)
+                          ]),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
       ],
@@ -144,17 +186,17 @@ class _DraggableExampleState extends State<DraggableExample> {
     List<Box> droppedBoxes,
     String promotorId,
     String estabelecimentoId,
+    int dia,
   ) {
     return DragTarget(
       builder: (context, candidateData, rejectedData) {
         return Container(
-          height: 180,
+          height: 200,
           width: 150,
           color: isDraggingOver ? Colors.green : Colors.yellow,
           child: Center(
             child: Column(
               children: [
-                Text(promotorId),
                 Text(droppedBoxes.length.toString()),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -253,7 +295,8 @@ class _DraggableExampleState extends State<DraggableExample> {
       },
       onAccept: (Box droppedBox) {
         setState(() {
-          print('Box: ${droppedBox.id} / key $chave');
+          print(
+              'Cliente: ${droppedBox.id} / estabelecimento $chave / dia $dia / Promotor $promotorId');
           droppedBoxes.add(droppedBox);
           boxes.remove(droppedBox);
           isDraggingOver = false;
@@ -264,7 +307,7 @@ class _DraggableExampleState extends State<DraggableExample> {
 }
 
 class Box {
-  final int id;
+  final String id;
   final Color color;
   final Key key;
   int day;
@@ -316,7 +359,7 @@ class DraggableBox extends StatelessWidget {
           height: 50,
           color: box.color,
           child: Center(
-            child: Text('Box ${box.id}'),
+            child: Text('Cli ${box.id}'),
           ),
         ),
       ),
@@ -343,7 +386,7 @@ class FeedBackBox extends StatelessWidget {
           height: 50,
           color: box.color.withOpacity(0.7),
           child: Center(
-            child: Text('Box ${box.id}'),
+            child: Text('Cli ${box.id}'),
           ),
         ),
       ),
