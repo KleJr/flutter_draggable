@@ -242,21 +242,8 @@ class DraggableBox extends StatelessWidget {
     return Draggable(
       key: allowedDropKey,
       data: box,
-      feedback: Material(
-        color: Colors.transparent,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Container(
-            width: 50,
-            height: 50,
-            color: box.color.withOpacity(0.7),
-            child: Center(
-              child: Text('Box ${box.id}'),
-            ),
-          ),
-        ),
-      ),
-      childWhenDragging: Container(),
+      feedback: feedBackBox(box: box),
+      childWhenDragging: feedBackBox(box: box),
       onDragStarted: onDragStarted,
       onDragEnd: (details) {
         if (details.wasAccepted) {
@@ -281,6 +268,33 @@ class DraggableBox extends StatelessWidget {
           width: 50,
           height: 50,
           color: box.color,
+          child: Center(
+            child: Text('Box ${box.id}'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class feedBackBox extends StatelessWidget {
+  const feedBackBox({
+    super.key,
+    required this.box,
+  });
+
+  final Box box;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          width: 50,
+          height: 50,
+          color: box.color.withOpacity(0.7),
           child: Center(
             child: Text('Box ${box.id}'),
           ),
